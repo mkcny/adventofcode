@@ -32,3 +32,4 @@ seats.map do |seat|
 end
 
 puts "max id: #{ids.max}"
+puts "my seat: #{(ids.min..ids.max).to_a - ids}"
