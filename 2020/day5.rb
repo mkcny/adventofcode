@@ -1,8 +1,4 @@
-seats = File.read("day5-input").lines.map(&:chomp).map(&:chars)
-
-ids = []
-
-seats.map do |seat|
+def determine_row(seat)
   possible_rows = (0..127).to_a
   seat.first(7).each do |zone|
     if zone == 'F'
@@ -12,8 +8,11 @@ seats.map do |seat|
     end
   end
 
-  row = possible_rows.first
+  raise unless possible_rows.length == 1
+  return possible_rows.first
+end
 
+def determine_column(seat)
   possible_columns = (0..7).to_a
   seat.last(3).each do |zone|
     if zone == 'L'
@@ -23,12 +22,18 @@ seats.map do |seat|
     end
   end
 
-  column = possible_columns.first
-  id = row * 8 + column
-  ids << id
+  raise unless possible_columns.length == 1
+  return possible_columns.first
+end
 
-  puts "Row: #{row}, Column: #{column}, ID: #{id}"
+seats = File.read("day5-input").lines.map(&:chomp).map(&:chars)
+ids = []
 
+seats.map do |seat|
+  row = determine_row(seat)
+  column = determine_column(seat)
+  ids << row * 8 + column
+  puts "Row: #{row}, Column: #{column}, ID: #{ids.last}"
 end
 
 puts "max id: #{ids.max}"
