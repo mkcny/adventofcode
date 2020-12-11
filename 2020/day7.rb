@@ -1,8 +1,6 @@
 require 'set'
 
-class AcyclicGraph
-  attr_accessor :nodes
-
+class Graph
   def initialize()
     @nodes = {}
   end
@@ -12,12 +10,16 @@ class AcyclicGraph
     nodes[node_name] = Node.new(node_name)
   end
 
-  def get_node(node_name)
+  def find(node_name)
     nodes[node_name]
   end
 
+  private
+
+  attr_accessor :nodes
+
   class Node
-    attr_accessor :name, :children, :parents
+    attr_reader :name
 
     def initialize(name)
       @name = name
@@ -25,30 +27,33 @@ class AcyclicGraph
       @parents = Set.new
     end
 
+    def add_parent(node)
+      parents.add(node)
+    end
+
     def add_child(node, count)
       raise if children.key?(node.name)
-
-      node.parents.add(self)
-
-      children[node.name] = {
-        count: count,
-        node: node
-      }
+      node.add_parent(self)
+      children[node.name] = {count: count, node: node}
     end
 
     def get_all_parents
-      result = Set.new
-      @parents.each do |parent|
-        result.add(parent)
-        result.merge(parent.get_all_parents)
+      Set.new.tap do |result|
+        parents.each do |parent|
+          result.add(parent)
+          result.merge(parent.get_all_parents)
+        end
       end
-      return result
     end
+
+    private
+
+    attr_accessor :children, :parents
   end
 end
 
 rules = File.read("day7-input").lines
-graph = AcyclicGraph.new
+graph = Graph.new
 
 rules.map { |rule|
   bag_type, contents = rule.gsub(/ bags?/, '').tr("\n.", '').split(" contain ")
@@ -57,9 +62,10 @@ rules.map { |rule|
   contents.split(', ').each { |content|
     break if content == "no other"
     count, nested_bag_type = content.match(/(\d+) ([\w ]+)/).captures
-    child = graph.add_node(nested_bag_type)
-    parent.add_child(child, count)
+    parent.add_child(graph.add_node(nested_bag_type), count)
   }
 }
 
-puts graph.get_node("shiny gold").get_all_parents.count
+part1_result = graph.find("shiny gold").get_all_parents.count
+puts "part 1 result: #{part1_result}"
+raise "you broke something" unless part1_result == 151

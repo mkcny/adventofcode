@@ -3,7 +3,7 @@ require_relative "day7"
 
 class Day7Tests < Minitest::Test
   def setup
-    @graph = AcyclicGraph.new
+    @graph = Graph.new
   end
 
   def test_adding_a_node
@@ -12,10 +12,9 @@ class Day7Tests < Minitest::Test
     node = @graph.add_node('test')
     node.add_child(child_node, 1)
 
-    assert @graph.nodes.key?('test')
-    assert @graph.nodes.key?('child_node')
-    assert @graph.get_node('test').children.key?('child_node')
-    assert @graph.get_node('child_node').parents.include?(node)
+    # TODO: don't use send?
+    assert @graph.find('test').send(:children).key?('child_node')
+    assert @graph.find('child_node').send(:parents).include?(node)
   end
 
   def test_prevent_duplicate_nodes
