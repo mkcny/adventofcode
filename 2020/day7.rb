@@ -100,7 +100,7 @@ def part_one(graph)
 end
 
 if __FILE__ == $0
-  rules = File.read("day7-input").lines
+  rules = File.read("input/day7").lines
   graph = parse_rules(rules)
   puts "part 1 result: #{part_one(graph)}"
 end

@@ -2,7 +2,7 @@
 require 'pry'
 
 def parsed_lines
-  File.read("day2-input").lines
+  File.read("input/day2").lines
     .map { _1.match(/(?<min>\d+)-(?<max>\d+) (?<char>[a-z]): (?<password>[a-z]+)/) }
     .map { _1.named_captures.transform_keys!(&:to_sym) }
     .map { _1.merge({min: _1[:min].to_i, max: _1[:max].to_i}) }

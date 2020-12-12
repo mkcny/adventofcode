@@ -1,7 +1,7 @@
 # typed: false
 require 'pry'
 
-puts File.read("day1-input")
+puts File.read("input/day1")
   .split
   .map(&:to_i)
   .combination(3)

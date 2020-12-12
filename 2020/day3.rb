@@ -1,5 +1,5 @@
 # typed: true
-data = File.read("day3-input").lines.map(&:chomp).map(&:chars)
+data = File.read("input/day3").lines.map(&:chomp).map(&:chars)
 
 def trees_hit(data, coordinates)
   coordinates.count { data[_1[0]][_1[1] % data[_1[0]].size] == "#" }

@@ -8,7 +8,7 @@ class Day7Tests < Minitest::Test
   end
 
   def test_part_one_result
-    rules = File.read("day7-input").lines
+    rules = File.read("input/day7").lines
     graph = parse_rules(rules)
     assert_equal 151, part_one(graph)
   end

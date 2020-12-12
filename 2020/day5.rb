@@ -27,7 +27,7 @@ def determine_column(seat)
   return possible_columns.first
 end
 
-seats = File.read("day5-input").lines.map(&:chomp).map(&:chars)
+seats = File.read("input/day5").lines.map(&:chomp).map(&:chars)
 ids = []
 
 seats.map do |seat|

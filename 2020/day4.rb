@@ -1,5 +1,5 @@
 # typed: false
-passports = File.read("day4-input")
+passports = File.read("input/day4")
   .split("\n\n")
   .map { Hash[_1.scan(/([a-z]+):([\w#]+)/)] }
 
