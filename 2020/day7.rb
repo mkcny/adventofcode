@@ -68,6 +68,17 @@ class Graph
       end
     end
 
+    sig {returns(Integer)}
+    def count_child_bags
+      children.values.reduce(0) do |sum, child|
+        nested_count = child.node.count_child_bags
+
+        new_sum = sum + child.count
+        new_sum = new_sum + (child.count * nested_count) if nested_count > 0
+        new_sum
+      end
+    end
+
     private
 
     sig{returns(T::Hash[String, AnnotatedChild])}
@@ -99,8 +110,14 @@ def part_one(graph)
   graph.find("shiny gold").get_all_parents.count
 end
 
+sig {params(graph: Graph).returns(Integer)}
+def part_two(graph)
+  node = graph.find("shiny gold")
+  return node.count_child_bags
+end
+
 if __FILE__ == $0
-  rules = File.read("input/day7").lines
-  graph = parse_rules(rules)
+  graph = parse_rules(File.read("input/day7").lines)
   puts "part 1 result: #{part_one(graph)}"
+  puts "part 2 result: #{part_two(graph)}"
 end

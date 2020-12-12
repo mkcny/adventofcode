@@ -8,9 +8,27 @@ class Day7Tests < Minitest::Test
   end
 
   def test_part_one_result
-    rules = File.read("input/day7").lines
-    graph = parse_rules(rules)
+    graph = parse_rules(File.read("input/day7").lines)
     assert_equal 151, part_one(graph)
+  end
+
+  def test_part_two_result
+    graph = parse_rules(File.read("input/day7").lines)
+    assert_equal 41559, part_two(graph)
+  end
+
+  def test_part_two_example
+    rules = [
+      "shiny gold bags contain 2 dark red bags.",
+      "dark red bags contain 2 dark orange bags.",
+      "dark orange bags contain 2 dark yellow bags.",
+      "dark yellow bags contain 2 dark green bags.",
+      "dark green bags contain 2 dark blue bags.",
+      "dark blue bags contain 2 dark violet bags.",
+      "dark violet bags contain no other bags."
+    ]
+    graph = parse_rules(rules)
+    assert_equal 126, part_two(graph)
   end
 
   def test_adding_a_node
