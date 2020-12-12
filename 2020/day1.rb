@@ -1,3 +1,4 @@
+# typed: false
 require 'pry'
 
 puts File.read("day1-input")

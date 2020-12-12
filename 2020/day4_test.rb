@@ -1,3 +1,4 @@
+# typed: false
 require "minitest/autorun"
 require_relative "day4"
 

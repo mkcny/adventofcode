@@ -1,42 +1,62 @@
+# typed: strict
+require 'sorbet-runtime'
 require 'set'
 
 class Graph
+  extend T::Sig
+
+  sig {void}
   def initialize()
-    @nodes = {}
+    @nodes = T.let({}, T::Hash[String, Node])
   end
 
+  sig {params(node_name: String).returns(Node)}
   def add_node(node_name)
-    return nodes[node_name] if nodes.key?(node_name)
+    return nodes.fetch(node_name) if nodes.key?(node_name)
     nodes[node_name] = Node.new(node_name)
   end
 
+  sig {params(node_name: String).returns(Node)}
   def find(node_name)
-    nodes[node_name]
+    nodes.fetch(node_name)
   end
 
   private
 
+  sig{returns(T::Hash[String, Node])}
   attr_accessor :nodes
 
   class Node
+    extend T::Sig
+
+    sig{returns(String)}
     attr_reader :name
 
-    def initialize(name)
-      @name = name
-      @children = {}
-      @parents = Set.new
+    class AnnotatedChild < T::Struct
+      const :count, Integer
+      const :node, Node
     end
 
+    sig {params(name: String).void}
+    def initialize(name)
+      @name = name
+      @children = T.let({}, T::Hash[String, AnnotatedChild])
+      @parents = T.let(Set.new, T::Set[Node])
+    end
+
+    sig {params(node: Node).void}
     def add_parent(node)
       parents.add(node)
     end
 
+    sig {params(node: Node, count: Integer).void}
     def add_child(node, count)
       raise if children.key?(node.name)
       node.add_parent(self)
-      children[node.name] = {count: count, node: node}
+      children[node.name] = AnnotatedChild.new(count: count, node: node)
     end
 
+    sig {returns(T::Set[Node])}
     def get_all_parents
       Set.new.tap do |result|
         parents.each do |parent|
@@ -48,7 +68,11 @@ class Graph
 
     private
 
-    attr_accessor :children, :parents
+    sig{returns(T::Hash[String, AnnotatedChild])}
+    attr_accessor :children
+
+    sig {returns(T::Set[Node])}
+    attr_accessor :parents
   end
 end
 
@@ -57,12 +81,12 @@ graph = Graph.new
 
 rules.map { |rule|
   bag_type, contents = rule.gsub(/ bags?/, '').tr("\n.", '').split(" contain ")
-  parent = graph.add_node(bag_type)
+  parent = graph.add_node(T.must(bag_type))
 
-  contents.split(', ').each { |content|
+  T.must(contents).split(', ').each { |content|
     break if content == "no other"
-    count, nested_bag_type = content.match(/(\d+) ([\w ]+)/).captures
-    parent.add_child(graph.add_node(nested_bag_type), count)
+    count, nested_bag_type = T.must(content.match(/(\d+) ([\w ]+)/)).captures
+    parent.add_child(graph.add_node(T.must(nested_bag_type)), T.must(count).to_i)
   }
 }
 

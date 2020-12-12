@@ -1,3 +1,4 @@
+# typed: true
 def determine_row(seat)
   possible_rows = (0..127).to_a
   seat.first(7).each do |zone|
