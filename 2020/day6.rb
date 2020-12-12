@@ -1,3 +1,4 @@
+# typed: false
 # Part 1
 
 puts File.read("day6-input")

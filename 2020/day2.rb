@@ -1,3 +1,4 @@
+# typed: false
 require 'pry'
 
 def parsed_lines

@@ -1,3 +1,4 @@
+# typed: true
 data = File.read("day3-input").lines.map(&:chomp).map(&:chars)
 
 def trees_hit(data, coordinates)

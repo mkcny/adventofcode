@@ -16,6 +16,10 @@ GEM
     pry-stack_explorer (0.5.1)
       binding_of_caller (~> 0.7)
       pry (~> 0.13)
+    sorbet (0.5.6141)
+      sorbet-static (= 0.5.6141)
+    sorbet-runtime (0.5.6141)
+    sorbet-static (0.5.6141-universal-darwin-14)
 
 PLATFORMS
   ruby
@@ -24,6 +28,8 @@ DEPENDENCIES
   pry
   pry-rescue
   pry-stack_explorer
+  sorbet
+  sorbet-runtime
 
 BUNDLED WITH
    2.1.4
