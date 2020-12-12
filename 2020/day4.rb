@@ -7,7 +7,7 @@ passports = File.read("day4-input")
 # Part 1
 
 REQUIRED_FIELDS = [ 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid' ]
-puts passports.count { |fields| REQUIRED_FIELDS.all? { fields.key?(_1) } }
+puts passports.count { |fields| REQUIRED_FIELDS.all? { fields.key?(_1) } } if __FILE__ == $0
 
 
 # Part 2
@@ -30,4 +30,4 @@ puts passports.count { |fields|
   REQUIRED_FIELDS_WITH_VALIDATORS.all? do |field_name, validator|
     fields.key?(field_name) && validator.(fields[field_name])
   end
-}
+} if __FILE__ == $0

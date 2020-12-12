@@ -1,10 +1,16 @@
 # typed: false
 require "minitest/autorun"
-require_relative "day7"
+require_relative "../day7"
 
 class Day7Tests < Minitest::Test
   def setup
     @graph = Graph.new
+  end
+
+  def test_part_one_result
+    rules = File.read("day7-input").lines
+    graph = parse_rules(rules)
+    assert_equal 151, part_one(graph)
   end
 
   def test_adding_a_node

@@ -1,6 +1,6 @@
 # typed: false
 require "minitest/autorun"
-require_relative "day4"
+require_relative "../day4"
 
 class Day4Tests < Minitest::Test
   def test_height_validator

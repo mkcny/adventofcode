@@ -16,6 +16,7 @@ GEM
     pry-stack_explorer (0.5.1)
       binding_of_caller (~> 0.7)
       pry (~> 0.13)
+    rake (13.0.1)
     sorbet (0.5.6141)
       sorbet-static (= 0.5.6141)
     sorbet-runtime (0.5.6141)
@@ -28,6 +29,7 @@ DEPENDENCIES
   pry
   pry-rescue
   pry-stack_explorer
+  rake
   sorbet
   sorbet-runtime
 

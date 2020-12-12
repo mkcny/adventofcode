@@ -2,6 +2,8 @@
 require 'sorbet-runtime'
 require 'set'
 
+extend T::Sig
+
 class Graph
   extend T::Sig
 
@@ -76,20 +78,29 @@ class Graph
   end
 end
 
-rules = File.read("day7-input").lines
-graph = Graph.new
+sig {params(rules: T::Array[String]).returns(Graph)}
+def parse_rules(rules)
+  Graph.new.tap do |graph|
+    rules.map do |rule|
+      bag_type, contents = rule.gsub(/ bags?/, '').tr("\n.", '').split(" contain ")
+      parent = graph.add_node(T.must(bag_type))
 
-rules.map { |rule|
-  bag_type, contents = rule.gsub(/ bags?/, '').tr("\n.", '').split(" contain ")
-  parent = graph.add_node(T.must(bag_type))
+      T.must(contents).split(', ').each do |content|
+        break if content == "no other"
+        count, nested_bag_type = T.must(content.match(/(\d+) ([\w ]+)/)).captures
+        parent.add_child(graph.add_node(T.must(nested_bag_type)), T.must(count).to_i)
+      end
+    end
+  end
+end
 
-  T.must(contents).split(', ').each { |content|
-    break if content == "no other"
-    count, nested_bag_type = T.must(content.match(/(\d+) ([\w ]+)/)).captures
-    parent.add_child(graph.add_node(T.must(nested_bag_type)), T.must(count).to_i)
-  }
-}
+sig {params(graph: Graph).returns(Integer)}
+def part_one(graph)
+  graph.find("shiny gold").get_all_parents.count
+end
 
-part1_result = graph.find("shiny gold").get_all_parents.count
-puts "part 1 result: #{part1_result}"
-raise "you broke something" unless part1_result == 151
+if __FILE__ == $0
+  rules = File.read("day7-input").lines
+  graph = parse_rules(rules)
+  puts "part 1 result: #{part_one(graph)}"
+end

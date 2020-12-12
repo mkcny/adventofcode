@@ -6,3 +6,5 @@ gem 'pry-stack_explorer'
 
 gem 'sorbet'
 gem 'sorbet-runtime'
+
+gem 'rake'
