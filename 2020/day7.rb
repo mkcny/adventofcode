@@ -81,7 +81,7 @@ class Graph
 
     private
 
-    sig{returns(T::Hash[String, AnnotatedChild])}
+    sig {returns(T::Hash[String, AnnotatedChild])}
     attr_accessor :children
 
     sig {returns(T::Set[Node])}
@@ -112,8 +112,7 @@ end
 
 sig {params(graph: Graph).returns(Integer)}
 def part_two(graph)
-  node = graph.find("shiny gold")
-  return node.count_child_bags
+  return graph.find("shiny gold").count_child_bags
 end
 
 if __FILE__ == $0
