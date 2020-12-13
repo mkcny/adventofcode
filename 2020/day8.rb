@@ -34,8 +34,6 @@ def execute_instructions(instructions)
     end
   end
 
-  puts "acc: #{acc}, run: #{run}"
-
   Result.new(acc: acc, run: run)
 end
 
@@ -47,9 +45,39 @@ def parse_instructions(lines)
   }
 end
 
+sig { params(instructions: T::Array[Instruction], index: Integer, block: T.proc.void).void }
+def flip_instruction(instructions, index, &block)
+  inst = instructions.fetch(index)
+  orig = inst.command
+  inst.command = orig == "jmp" ? "nop" : "jmp"
+
+  yield
+
+  inst.command = orig
+end
+
+sig { params(instructions: T::Array[Instruction], part1_result: Result).returns(Result) }
+def day8_part2(instructions, part1_result)
+  indexes_to_try = part1_result.run
+    .filter { ["jmp", "nop"].include?(instructions.fetch(_1).command) }
+
+  indexes_to_try.each do |index|
+    flip_instruction(instructions, index) do
+      result = execute_instructions(instructions)
+      return result if result.run.include?(instructions.each_index.max)
+    end
+  end
+
+  raise "didn't ever terminate"
+end
+
 
 if __FILE__ == $0
   instructions = parse_instructions(File.read("input/day8").lines)
-  result = execute_instructions(instructions)
-  puts "part 1 result: #{result}"
+
+  part1_result = execute_instructions(instructions)
+  puts "part 1 result: acc = #{part1_result.acc}"
+
+  part2_result = day8_part2(instructions, part1_result)
+  puts "part 2 result: acc = #{part2_result.acc}"
 end
