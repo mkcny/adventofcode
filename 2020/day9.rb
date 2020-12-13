@@ -20,8 +20,34 @@ def find_invalid_num(input, preamble_size)
   raise "no invalid numbers found"
 end
 
+sig { params(input: T::Array[Integer], preamble_size: Integer, sum_to_find: Integer).returns(Integer) }
+def day9_part2(input, preamble_size, sum_to_find)
+  index = 0
+
+  while true
+    range_size = 2
+    loop do
+      fin = index + range_size
+      nums = input.values_at(*(index..fin).to_a)
+      sum = nums.sum
+
+      return nums.min + nums.max if sum == sum_to_find
+      break if sum >= sum_to_find
+
+      range_size = range_size + 1
+    end
+
+    index = index + 1
+  end
+end
+
 
 if __FILE__ == $0
   input = File.read("input/day9").lines.map(&:to_i)
-  puts find_invalid_num(input, 25)
+
+  part1_result = find_invalid_num(input, 25)
+  puts "part 1 result: #{part1_result}"
+
+  part2_result = day9_part2(input, 25, part1_result)
+  puts "part 2 result: #{part2_result}"
 end
