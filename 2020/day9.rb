@@ -4,17 +4,13 @@ extend T::Sig
 
 sig { params(input: T::Array[Integer], preamble_size: Integer).returns(Integer) }
 def find_invalid_num(input, preamble_size)
-  index = preamble_size
+  (preamble_size...input.length).each do |index|
+    value = input.fetch(index)
+    range = ((index - preamble_size)..(index - 1))
+    prev_nums = input.values_at(*range.to_a)
 
-  while value = input[index]
-    start = index - preamble_size
-    fin = index - 1
-    nums = input.values_at(*(start..fin).to_a)
-
-    result = nums.combination(2).any? { |pair| pair.sum == value }
+    result = prev_nums.combination(2).any? { |pair| pair.sum == value }
     return value unless result
-
-    index = index + 1
   end
 
   raise "no invalid numbers found"
@@ -22,23 +18,17 @@ end
 
 sig { params(input: T::Array[Integer], preamble_size: Integer, sum_to_find: Integer).returns(Integer) }
 def day9_part2(input, preamble_size, sum_to_find)
-  index = 0
+  input.each_index do |index|
+    (2...input.length).each do |range_size|
+      range = (index..(index + range_size))
+      nums = input.values_at(*range.to_a)
 
-  while true
-    range_size = 2
-    loop do
-      fin = index + range_size
-      nums = input.values_at(*(index..fin).to_a)
-      sum = nums.sum
-
-      return nums.min + nums.max if sum == sum_to_find
-      break if sum >= sum_to_find
-
-      range_size = range_size + 1
+      return nums.min + nums.max if nums.sum == sum_to_find
+      break if nums.sum >= sum_to_find
     end
-
-    index = index + 1
   end
+
+  raise "not found"
 end
 
 
