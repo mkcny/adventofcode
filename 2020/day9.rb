@@ -16,8 +16,8 @@ def find_invalid_num(input, preamble_size)
   raise "no invalid numbers found"
 end
 
-sig { params(input: T::Array[Integer], preamble_size: Integer, sum_to_find: Integer).returns(Integer) }
-def day9_part2(input, preamble_size, sum_to_find)
+sig { params(input: T::Array[Integer], sum_to_find: Integer).returns(Integer) }
+def day9_part2(input, sum_to_find)
   input.each_index do |index|
     (2...input.length).each do |range_size|
       range = (index..(index + range_size))
@@ -38,6 +38,6 @@ if __FILE__ == $0
   part1_result = find_invalid_num(input, 25)
   puts "part 1 result: #{part1_result}"
 
-  part2_result = day9_part2(input, 25, part1_result)
+  part2_result = day9_part2(input, part1_result)
   puts "part 2 result: #{part2_result}"
 end

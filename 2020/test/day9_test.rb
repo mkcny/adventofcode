@@ -30,7 +30,7 @@ class Day9Tests < Minitest::Test
     part1_result = find_invalid_num(input, preamble_size)
     assert_equal 127, part1_result
 
-    part2_result = day9_part2(input, preamble_size, part1_result)
+    part2_result = day9_part2(input, part1_result)
     assert_equal 62, part2_result
   end
 end
