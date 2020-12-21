@@ -20,10 +20,10 @@ class Node {
 
   getAllParents(): Set<Node> {
     let result: Set<Node> = new Set()
-    for (let [_, parent] of this.parents) {
+    this.parents.forEach(parent => {
       result.add(parent)
       result = new Set([...parent.getAllParents(), ...result])
-    }
+    })
     return result
   }
 }
