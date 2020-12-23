@@ -17,8 +17,9 @@ def day10_part1(jolts)
   result.fetch(1) * result.fetch(3)
 end
 
-sig { params(jolts: T::Array[Integer], start_index: Integer, level: Integer).returns(Integer) }
-def count_all_paths(jolts, start_index = 0, level = 0)
+sig { params(jolts: T::Array[Integer], start_index: Integer, cache: T::Hash[Integer, Integer]).returns(Integer) }
+def count_all_paths(jolts, start_index = 0, cache = {})
+  return cache.fetch(start_index) if cache[start_index]
   count = 1
   (start_index...jolts.length).each do |index|
     range_start = index + 2
@@ -28,11 +29,12 @@ def count_all_paths(jolts, start_index = 0, level = 0)
     (range_start..range_end).each do |i|
       diff = jolts.fetch(i) - jolts.fetch(index)
       if diff > 1 && diff <= 3
-        result = count_all_paths(jolts, i, level + 1)
+        result = count_all_paths(jolts, i, cache)
         count = count + result
       end
     end
   end
+  cache[start_index] = count
   return count
 end
 
