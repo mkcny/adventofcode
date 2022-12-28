@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 const BONUSES: [(&str, i32); 6] = [("A", 1), ("B", 2), ("C", 3), ("X", 1), ("Y", 2), ("Z", 3)];
 
 fn parse_and_score(score: fn(&str, &str) -> i32) -> i32 {
@@ -9,20 +11,13 @@ fn parse_and_score(score: fn(&str, &str) -> i32) -> i32 {
         .sum()
 }
 
-fn find_bonus(mv: &str) -> i32 {
-    *BONUSES
-        .iter()
-        .find(|(m, _b)| m.eq(&mv))
-        .map(|(_m, b)| b)
-        .unwrap()
-}
-
 pub fn part1() {
     let score = |their_move: &str, my_move: &str| {
         let wins = [("A", "Y"), ("B", "Z"), ("C", "X")];
         let draws = [("A", "X"), ("B", "Y"), ("C", "Z")];
+        let bonuses = HashMap::from(BONUSES);
 
-        let bonus = find_bonus(my_move);
+        let bonus = bonuses.get(my_move).unwrap();
 
         let score = match (their_move, my_move) {
             m if draws.iter().any(|mv| *mv == m) => 3,
@@ -38,34 +33,15 @@ pub fn part1() {
 
 pub fn part2() {
     let score = |their_move: &str, desired_outcome: &str| {
-        let wins = [("A", "B"), ("B", "C"), ("C", "A")];
-        let losses = [("A", "C"), ("B", "A"), ("C", "B")];
+        let wins = HashMap::from([("A", "B"), ("B", "C"), ("C", "A")]);
+        let losses = HashMap::from([("A", "C"), ("B", "A"), ("C", "B")]);
+        let bonuses = HashMap::from(BONUSES);
 
         match desired_outcome {
-            // lose
-            "X" => {
-                let my_move = losses
-                    .iter()
-                    .find(|(t, _)| *t == their_move)
-                    .map(|(_, m)| m)
-                    .unwrap();
-                find_bonus(my_move)
-            }
-
-            // draw
-            "Y" => find_bonus(their_move) + 3,
-
-            // win
-            "Z" => {
-                let my_move = wins
-                    .iter()
-                    .find(|(t, _)| *t == their_move)
-                    .map(|(_, m)| m)
-                    .unwrap();
-                find_bonus(my_move) + 6
-            }
-
-            _ => unreachable!("unexpected input"),
+            "X" => *bonuses.get(losses.get(their_move).unwrap()).unwrap(),
+            "Y" => bonuses.get(their_move).unwrap() + 3,
+            "Z" => bonuses.get(wins.get(their_move).unwrap()).unwrap() + 6,
+            _ => panic!("unexpected input"),
         }
     };
 
