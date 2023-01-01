@@ -17,6 +17,7 @@ fn main() -> Result<(), std::io::Error> {
     day3::part2();
 
     day4::part1();
+    day4::part2();
 
     Ok(())
 }
