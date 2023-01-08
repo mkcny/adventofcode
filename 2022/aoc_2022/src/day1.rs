@@ -10,7 +10,7 @@ pub fn part1() {
     let totals = parse_input();
     let highest = totals.iter().max().unwrap();
 
-    println!("d1 p1: {}", highest);
+    println!("d1 p1: {highest}");
 }
 
 pub fn part2() {
@@ -21,5 +21,5 @@ pub fn part2() {
 
     let answer: i32 = totals[0..3].iter().sum();
 
-    println!("d1 p2: {}", answer);
+    println!("d1 p2: {answer}");
 }

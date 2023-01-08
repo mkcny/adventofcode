@@ -5,8 +5,8 @@ const BONUSES: [(&str, i32); 6] = [("A", 1), ("B", 2), ("C", 3), ("X", 1), ("Y",
 fn parse_and_score(score: fn(&str, &str) -> i32) -> i32 {
     std::fs::read_to_string("inputs/day2")
         .unwrap()
-        .split("\n")
-        .map(|game| game.split(" "))
+        .split('\n')
+        .map(|game| game.split(' '))
         .map(|mut moves| score(moves.next().unwrap(), moves.next().unwrap()))
         .sum()
 }
