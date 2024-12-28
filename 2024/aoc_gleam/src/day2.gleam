@@ -1,13 +1,11 @@
 import gleam/dict
 import gleam/function
 import gleam/int
-import gleam/io
 import gleam/list
 import gleam/order
 import gleam/result
 import gleam/string
 import simplifile
-import util
 
 fn parse_reports() {
   use input <- result.map(simplifile.read("input/day2"))
@@ -20,11 +18,26 @@ fn parse_reports() {
 
 pub fn step1() {
   use reports <- result.map(parse_reports())
+  list.count(reports, safe)
+}
 
-  list.count(reports, fn(report) {
-    all_increasing_or_decreasing(report)
-    && levels_differ_within_tolerance(report)
+pub fn step2() {
+  use reports <- result.map(parse_reports())
+  list.count(reports, fn(report) { safe(report) || safe_variant(report) })
+}
+
+fn safe_variant(report: List(Int)) -> Bool {
+  report
+  |> list.index_map(fn(_, i) {
+    let #(left, right) = list.split(report, i)
+    list.append(left, list.drop(right, 1))
   })
+  |> list.find(safe)
+  |> result.is_ok
+}
+
+fn safe(report: List(Int)) -> Bool {
+  all_increasing_or_decreasing(report) && levels_differ_within_tolerance(report)
 }
 
 fn all_increasing_or_decreasing(report: List(Int)) -> Bool {
