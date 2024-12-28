@@ -46,13 +46,10 @@ pub fn step2() {
     |> list.group(function.identity)
     |> dict.map_values(fn(_, value) { list.length(value) })
 
-  // io.debug(counts)
-
   let similarity_score =
     col1
-    |> list.map(fn(x) {
-      let y = dict.get(counts, x) |> result.unwrap(0)
-      x * y
+    |> list.filter_map(fn(x) {
+      dict.get(counts, x) |> result.map(int.multiply(_, x))
     })
     |> list.fold(0, int.add)
 
