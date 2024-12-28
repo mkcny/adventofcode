@@ -7,7 +7,7 @@ import gleam/result
 import gleam/string
 import simplifile
 
-pub fn step1() {
+fn get_cols() {
   use input <- result.map(simplifile.read("input/day1"))
 
   let cols =
@@ -19,6 +19,12 @@ pub fn step1() {
     |> list.map(list.filter_map(_, int.parse(_)))
 
   let assert [col1, col2] = cols
+
+  #(col1, col2)
+}
+
+pub fn step1() {
+  use #(col1, col2) <- result.map(get_cols())
 
   let sum =
     list.map2(col1, col2, int.subtract)
@@ -29,17 +35,7 @@ pub fn step1() {
 }
 
 pub fn step2() {
-  use input <- result.map(simplifile.read("input/day1"))
-
-  let cols =
-    input
-    |> string.split("\n")
-    |> list.map(string.split(_, "   "))
-    |> list.transpose
-    |> list.map(list.sort(_, by: string.compare))
-    |> list.map(list.filter_map(_, int.parse(_)))
-
-  let assert [col1, col2] = cols
+  use #(col1, col2) <- result.map(get_cols())
 
   let counts =
     col2
