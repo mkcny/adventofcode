@@ -14,10 +14,8 @@ fn index_input(input) {
 }
 
 fn find_indexes(indexed, char_to_find) {
-  indexed
-  |> dict.fold([], fn(acc, row_index, row) {
-    row
-    |> dict.fold([], fn(acc, col_index, char) {
+  dict.fold(indexed, [], fn(acc, row_index, row) {
+    dict.fold(row, [], fn(acc, col_index, char) {
       case char == char_to_find {
         True -> list.append(acc, [#(row_index, col_index)])
         False -> acc
@@ -25,6 +23,10 @@ fn find_indexes(indexed, char_to_find) {
     })
     |> list.append(acc, _)
   })
+}
+
+fn get_at(data, idx: #(Int, Int)) -> Result(String, Nil) {
+  dict.get(data, idx.0) |> result.try(dict.get(_, idx.1))
 }
 
 fn get_strings_for_offsets(
@@ -35,16 +37,8 @@ fn get_strings_for_offsets(
   list.map(indexes, fn(idx) {
     list.map(offsets_to_check, fn(offsets) {
       list.map(offsets, fn(offset) { #(idx.0 + offset.0, idx.1 + offset.1) })
-      |> list.filter_map(fn(pos_to_check) {
-        dict.get(indexed, pos_to_check.0)
-        |> result.map(dict.get(_, pos_to_check.1))
-      })
-      |> list.fold("", fn(str, res_char) {
-        case res_char {
-          Ok(char) -> str <> char
-          _ -> str
-        }
-      })
+      |> list.filter_map(get_at(indexed, _))
+      |> list.fold("", string.append)
     })
   })
 }
