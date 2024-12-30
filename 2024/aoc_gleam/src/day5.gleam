@@ -1,3 +1,4 @@
+import gleam/bool
 import gleam/int
 import gleam/list
 import gleam/result
@@ -57,32 +58,28 @@ fn reorder(update, rules) {
 }
 
 fn reorder_recursive(rules, reordered) {
-  case rules {
-    [] -> reordered
-    _ -> {
-      let assert [left, right] =
-        list.transpose(rules) |> list.map(set.from_list)
+  use <- bool.guard(when: rules == [], return: reordered)
 
-      // find the number that is only ever specified as first in all remaining rules
-      let next_num =
-        set.difference(left, right)
-        |> set.to_list
-        |> list.first
-        |> result.unwrap(0)
+  let assert [left, right] = list.transpose(rules) |> list.map(set.from_list)
 
-      // remove rules where the number we just got appears first
-      let rules =
-        list.filter(rules, fn(rule) {
-          case rule {
-            [left, _] if left == next_num -> False
-            _ -> True
-          }
-        })
+  // find the number that is only ever specified as first in all remaining rules
+  let next_num =
+    set.difference(left, right)
+    |> set.to_list
+    |> list.first
+    |> result.unwrap(0)
 
-      // add the number we found to the reordered list, carry on and find the next number
-      reorder_recursive(rules, list.append(reordered, [next_num]))
-    }
-  }
+  // remove rules where the number we just got appears first
+  let rules =
+    list.filter(rules, fn(rule) {
+      case rule {
+        [left, _] if left == next_num -> False
+        _ -> True
+      }
+    })
+
+  // add the number we found to the reordered list, carry on and find the next number
+  reorder_recursive(rules, list.append(reordered, [next_num]))
 }
 
 pub fn step2(input) {
