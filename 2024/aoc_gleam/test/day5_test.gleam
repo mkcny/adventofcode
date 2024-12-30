@@ -8,9 +8,7 @@ pub fn main() {
   gleeunit.main()
 }
 
-pub fn part1_sample_test() {
-  let input =
-    "47|53
+const sample_input = "47|53
 97|13
 97|61
 97|47
@@ -39,7 +37,8 @@ pub fn part1_sample_test() {
 61,13,29
 97,13,75,29,47"
 
-  day5.step1(input) |> should.equal(143)
+pub fn part1_sample_test() {
+  day5.step1(sample_input) |> should.equal(143)
 }
 
 pub fn part1_test() {
@@ -60,4 +59,13 @@ pub fn rule_applies_test() {
 pub fn rule_followed_test() {
   day5.rule_followed([75, 47, 61, 53, 29], [47, 53]) |> should.be_true()
   day5.rule_followed([75, 97, 47, 61, 53], [97, 75]) |> should.be_false()
+}
+
+pub fn part2_sample_test() {
+  day5.step2(sample_input) |> should.equal(123)
+}
+
+pub fn part2_test() {
+  use input <- result.map(simplifile.read("input/day5"))
+  day5.step2(input) |> should.equal(3062)
 }

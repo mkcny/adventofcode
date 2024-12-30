@@ -1,6 +1,7 @@
 import gleam/int
 import gleam/list
 import gleam/result
+import gleam/set
 import gleam/string
 
 fn convert_sublist_to_ints(sublist) {
@@ -46,6 +47,51 @@ pub fn step1(input) {
   let #(rules, updates) = parse_input(input)
 
   list.filter(updates, update_is_correctly_ordered(_, rules))
+  |> list.map(get_middle_number)
+  |> list.fold(0, int.add)
+}
+
+fn reorder(update, rules) {
+  let rules = list.filter(rules, rule_applies(update, _))
+  reorder_recursive(rules, [])
+}
+
+fn reorder_recursive(rules, reordered) {
+  case rules {
+    [] -> reordered
+    _ -> {
+      let assert [left, right] =
+        list.transpose(rules) |> list.map(set.from_list)
+
+      // find the number that is only ever specified as first in all remaining rules
+      let next_num =
+        set.difference(left, right)
+        |> set.to_list
+        |> list.first
+        |> result.unwrap(0)
+
+      // remove rules where the number we just got appears first
+      let rules =
+        list.filter(rules, fn(rule) {
+          case rule {
+            [left, _] if left == next_num -> False
+            _ -> True
+          }
+        })
+
+      // add the number we found to the reordered list, carry on and find the next number
+      reorder_recursive(rules, list.append(reordered, [next_num]))
+    }
+  }
+}
+
+pub fn step2(input) {
+  let #(rules, updates) = parse_input(input)
+
+  list.filter(updates, fn(update) {
+    !update_is_correctly_ordered(update, rules)
+  })
+  |> list.map(reorder(_, rules))
   |> list.map(get_middle_number)
   |> list.fold(0, int.add)
 }
