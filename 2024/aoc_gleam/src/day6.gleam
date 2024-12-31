@@ -93,3 +93,66 @@ pub fn step1(input) {
   move_until_out_of_bounds(grid, initial_pos, Up, set.new())
   |> set.size
 }
+
+type ExitType {
+  LoopDetected
+  OutOfBounds
+}
+
+fn move_until_out_of_bounds_or_loop_detected(
+  grid: grid.Grid,
+  pos: #(Int, Int),
+  direction: Move,
+  visited_positions: set.Set(#(Int, Int, Move)),
+) -> ExitType {
+  use <- bool.guard(when: pos_out_of_bounds(grid, pos), return: OutOfBounds)
+
+  let potential_next_pos = potential_next_pos(pos, direction)
+
+  case pos_obstructed(grid, potential_next_pos) {
+    True -> {
+      move_until_out_of_bounds_or_loop_detected(
+        grid,
+        pos,
+        turn_right(direction),
+        visited_positions,
+      )
+    }
+    False -> {
+      let newly_visited_pos = #(pos.0, pos.1, direction)
+
+      use <- bool.guard(
+        when: set.contains(visited_positions, newly_visited_pos),
+        return: LoopDetected,
+      )
+
+      move_until_out_of_bounds_or_loop_detected(
+        grid,
+        potential_next_pos,
+        direction,
+        set.insert(visited_positions, newly_visited_pos),
+      )
+    }
+  }
+}
+
+// this is slow (~1 min) and there's an off-by-one error when processing the full input
+pub fn step2(input) {
+  let grid = grid.index_2d_input(input)
+
+  let initial_pos =
+    grid.find_locations(grid, "^")
+    |> list.first
+    |> result.unwrap(#(0, 0))
+
+  move_until_out_of_bounds(grid, initial_pos, Up, set.new())
+  |> set.to_list
+  |> list.map(grid.set_at(grid, _, "#"))
+  |> list.map(move_until_out_of_bounds_or_loop_detected(
+    _,
+    initial_pos,
+    Up,
+    set.new(),
+  ))
+  |> list.count(fn(exit_type) { exit_type == LoopDetected })
+}

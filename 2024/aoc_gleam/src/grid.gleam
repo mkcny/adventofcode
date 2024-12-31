@@ -6,7 +6,7 @@ import gleam/string
 pub type Grid =
   dict.Dict(Int, dict.Dict(Int, String))
 
-pub fn index_2d_input(input) {
+pub fn index_2d_input(input) -> Grid {
   string.split(input, "\n")
   |> list.map(string.split(_, ""))
   |> list.map(fn(line) { list.index_map(line, fn(x, i) { #(i, x) }) })
@@ -27,6 +27,13 @@ pub fn find_locations(grid, char_to_find) -> List(#(Int, Int)) {
   })
 }
 
-pub fn get_at(data, idx: #(Int, Int)) -> Result(String, Nil) {
-  dict.get(data, idx.0) |> result.try(dict.get(_, idx.1))
+pub fn get_at(grid: Grid, idx: #(Int, Int)) -> Result(String, Nil) {
+  dict.get(grid, idx.0) |> result.try(dict.get(_, idx.1))
+}
+
+pub fn set_at(grid: Grid, idx: #(Int, Int), value: String) -> Grid {
+  dict.get(grid, idx.0)
+  |> result.unwrap(dict.new())
+  |> dict.insert(idx.1, value)
+  |> dict.insert(grid, idx.0, _)
 }
