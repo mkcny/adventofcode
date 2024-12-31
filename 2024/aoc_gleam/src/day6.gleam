@@ -136,7 +136,7 @@ fn move_until_out_of_bounds_or_loop_detected(
   }
 }
 
-// this is slow (~1 min) and there's an off-by-one error when processing the full input
+// this is slow (~1 min)
 pub fn step2(input) {
   let grid = grid.index_2d_input(input)
 
@@ -146,6 +146,7 @@ pub fn step2(input) {
     |> result.unwrap(#(0, 0))
 
   move_until_out_of_bounds(grid, initial_pos, Up, set.new())
+  |> set.delete(initial_pos)
   |> set.to_list
   |> list.map(grid.set_at(grid, _, "#"))
   |> list.map(move_until_out_of_bounds_or_loop_detected(
