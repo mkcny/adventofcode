@@ -40,24 +40,15 @@ fn move_until_out_of_bounds(
     return: visited_positions,
   )
 
+  let visited_positions = set.insert(visited_positions, pos)
   let potential_next_pos = potential_next_pos(pos, direction)
 
-  case grid.get_at(grid, potential_next_pos) {
-    Ok("#") ->
-      move_until_out_of_bounds(
-        grid,
-        pos,
-        turn_right(direction),
-        visited_positions,
-      )
-    _ ->
-      move_until_out_of_bounds(
-        grid,
-        potential_next_pos,
-        direction,
-        set.insert(visited_positions, pos),
-      )
+  let #(direction, next_pos) = case grid.get_at(grid, potential_next_pos) {
+    Ok("#") -> #(turn_right(direction), pos)
+    _ -> #(direction, potential_next_pos)
   }
+
+  move_until_out_of_bounds(grid, next_pos, direction, visited_positions)
 }
 
 pub fn step1(input) {
@@ -95,24 +86,20 @@ fn move_until_out_of_bounds_or_loop_detected(
     return: LoopDetected,
   )
 
+  let visited_positions = set.insert(visited_positions, newly_visited_pos)
   let potential_next_pos = potential_next_pos(pos, direction)
 
-  case grid.get_at(grid, potential_next_pos) {
-    Ok("#") ->
-      move_until_out_of_bounds_or_loop_detected(
-        grid,
-        pos,
-        turn_right(direction),
-        visited_positions,
-      )
-    _ ->
-      move_until_out_of_bounds_or_loop_detected(
-        grid,
-        potential_next_pos,
-        direction,
-        set.insert(visited_positions, newly_visited_pos),
-      )
+  let #(direction, next_pos) = case grid.get_at(grid, potential_next_pos) {
+    Ok("#") -> #(turn_right(direction), pos)
+    _ -> #(direction, potential_next_pos)
   }
+
+  move_until_out_of_bounds_or_loop_detected(
+    grid,
+    next_pos,
+    direction,
+    visited_positions,
+  )
 }
 
 pub fn step2(input) {
