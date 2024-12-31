@@ -1,33 +1,8 @@
-import gleam/dict
 import gleam/list
 import gleam/result
 import gleam/string
+import grid
 import simplifile
-
-fn index_input(input) {
-  string.split(input, "\n")
-  |> list.map(string.split(_, ""))
-  |> list.map(fn(line) { list.index_map(line, fn(x, i) { #(i, x) }) })
-  |> list.map(dict.from_list)
-  |> list.index_map(fn(x, i) { #(i, x) })
-  |> dict.from_list
-}
-
-fn find_indexes(indexed, char_to_find) {
-  dict.fold(indexed, [], fn(acc, row_index, row) {
-    dict.fold(row, [], fn(acc, col_index, char) {
-      case char == char_to_find {
-        True -> list.append(acc, [#(row_index, col_index)])
-        False -> acc
-      }
-    })
-    |> list.append(acc, _)
-  })
-}
-
-fn get_at(data, idx: #(Int, Int)) -> Result(String, Nil) {
-  dict.get(data, idx.0) |> result.try(dict.get(_, idx.1))
-}
 
 fn get_strings_for_offsets(
   indexed,
@@ -37,7 +12,7 @@ fn get_strings_for_offsets(
   list.map(indexes, fn(idx) {
     list.map(offsets_to_check, fn(offsets) {
       list.map(offsets, fn(offset) { #(idx.0 + offset.0, idx.1 + offset.1) })
-      |> list.filter_map(get_at(indexed, _))
+      |> list.filter_map(grid.get_at(indexed, _))
       |> list.fold("", string.append)
     })
   })
@@ -45,9 +20,9 @@ fn get_strings_for_offsets(
 
 pub fn step1() {
   use input <- result.map(simplifile.read("input/day4"))
-  let indexed = index_input(input)
+  let indexed = grid.index_2d_input(input)
 
-  let x_indexes = find_indexes(indexed, "X")
+  let x_indexes = grid.find_locations(indexed, "X")
 
   let offsets_to_check = [
     // up, down, sideways
@@ -69,9 +44,9 @@ pub fn step1() {
 
 pub fn step2() {
   use input <- result.map(simplifile.read("input/day4"))
-  let indexed = index_input(input)
+  let indexed = grid.index_2d_input(input)
 
-  let a_indexes = find_indexes(indexed, "A")
+  let a_indexes = grid.find_locations(indexed, "A")
 
   let offsets_to_check = [[#(-1, 1), #(1, -1)], [#(-1, -1), #(1, 1)]]
 
