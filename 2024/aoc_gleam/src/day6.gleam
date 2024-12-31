@@ -1,5 +1,4 @@
 import gleam/bool
-import gleam/dict
 import gleam/list
 import gleam/result
 import gleam/set
@@ -30,25 +29,6 @@ fn potential_next_pos(current_pos: #(Int, Int), move: Move) -> #(Int, Int) {
   }
 }
 
-fn pos_out_of_bounds(grid: grid.Grid, pos: #(Int, Int)) -> Bool {
-  let row_count = list.length(dict.values(grid))
-  let col_count =
-    grid
-    |> dict.get(0)
-    |> result.unwrap(dict.new())
-    |> dict.values
-    |> list.length
-
-  pos.0 < 0 || pos.1 < 0 || pos.0 >= row_count || pos.1 >= col_count
-}
-
-fn pos_obstructed(grid: grid.Grid, pos: #(Int, Int)) -> Bool {
-  case grid.get_at(grid, pos) {
-    Ok("#") -> True
-    _ -> False
-  }
-}
-
 fn move_until_out_of_bounds(
   grid: grid.Grid,
   pos: #(Int, Int),
@@ -56,29 +36,27 @@ fn move_until_out_of_bounds(
   visited_positions: set.Set(#(Int, Int)),
 ) -> set.Set(#(Int, Int)) {
   use <- bool.guard(
-    when: pos_out_of_bounds(grid, pos),
+    when: grid.get_at(grid, pos) == Error(Nil),
     return: visited_positions,
   )
 
   let potential_next_pos = potential_next_pos(pos, direction)
 
-  case pos_obstructed(grid, potential_next_pos) {
-    True -> {
+  case grid.get_at(grid, potential_next_pos) {
+    Ok("#") ->
       move_until_out_of_bounds(
         grid,
         pos,
         turn_right(direction),
         visited_positions,
       )
-    }
-    False -> {
+    _ ->
       move_until_out_of_bounds(
         grid,
         potential_next_pos,
         direction,
         set.insert(visited_positions, pos),
       )
-    }
   }
 }
 
@@ -105,38 +83,38 @@ fn move_until_out_of_bounds_or_loop_detected(
   direction: Move,
   visited_positions: set.Set(#(Int, Int, Move)),
 ) -> ExitType {
-  use <- bool.guard(when: pos_out_of_bounds(grid, pos), return: OutOfBounds)
+  use <- bool.guard(
+    when: grid.get_at(grid, pos) == Error(Nil),
+    return: OutOfBounds,
+  )
+
+  let newly_visited_pos = #(pos.0, pos.1, direction)
+
+  use <- bool.guard(
+    when: set.contains(visited_positions, newly_visited_pos),
+    return: LoopDetected,
+  )
 
   let potential_next_pos = potential_next_pos(pos, direction)
 
-  case pos_obstructed(grid, potential_next_pos) {
-    True -> {
+  case grid.get_at(grid, potential_next_pos) {
+    Ok("#") ->
       move_until_out_of_bounds_or_loop_detected(
         grid,
         pos,
         turn_right(direction),
         visited_positions,
       )
-    }
-    False -> {
-      let newly_visited_pos = #(pos.0, pos.1, direction)
-
-      use <- bool.guard(
-        when: set.contains(visited_positions, newly_visited_pos),
-        return: LoopDetected,
-      )
-
+    _ ->
       move_until_out_of_bounds_or_loop_detected(
         grid,
         potential_next_pos,
         direction,
         set.insert(visited_positions, newly_visited_pos),
       )
-    }
   }
 }
 
-// this is slow (~1 min)
 pub fn step2(input) {
   let grid = grid.index_2d_input(input)
 
