@@ -1,6 +1,5 @@
 import gleam/bool
 import gleam/list
-import gleam/result
 import gleam/set
 import grid
 
@@ -30,7 +29,7 @@ fn potential_next_pos(current_pos: #(Int, Int), move: Move) -> #(Int, Int) {
 }
 
 fn move_until_out_of_bounds(
-  grid: grid.Grid,
+  grid: grid.Grid(String),
   pos: #(Int, Int),
   direction: Move,
   visited_positions: set.Set(#(Int, Int)),
@@ -65,7 +64,7 @@ type ExitType {
 }
 
 fn move_until_out_of_bounds_or_loop_detected(
-  grid: grid.Grid,
+  grid: grid.Grid(String),
   pos: #(Int, Int),
   direction: Move,
   visited_positions: set.Set(#(Int, Int, Move)),

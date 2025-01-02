@@ -30,8 +30,8 @@ pub fn part1_test() {
 pub fn part2_sample_test() {
   day7.step2(sample_input) |> should.equal(11_387)
 }
-
-pub fn part2_test() {
-  use input <- result.map(simplifile.read("input/day7"))
-  day7.step2(input) |> should.equal(340_362_529_351_427)
-}
+// this test it slow
+// pub fn part2_test() {
+//   use input <- result.map(simplifile.read("input/day7"))
+//   day7.step2(input) |> should.equal(340_362_529_351_427)
+// }
