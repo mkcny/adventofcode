@@ -19,25 +19,37 @@ fn parse_input(input: String) -> List(#(Int, List(Int))) {
   })
 }
 
-fn can_be_solved(equation: #(Int, List(Int))) -> Bool {
+fn can_be_solved(equation: #(Int, List(Int)), operations) -> Bool {
   let #(solution, ints) = equation
   let assert [first, ..rest] = ints
-  solve(solution, rest, first)
+  solve(solution, rest, first, operations)
 }
 
-fn solve(solution: Int, ints: List(Int), tally: Int) -> Bool {
+fn concat(a: Int, b: Int) -> Int {
+  int.parse(int.to_string(a) <> int.to_string(b)) |> result.unwrap(0)
+}
+
+fn solve(solution: Int, ints: List(Int), tally: Int, operations) -> Bool {
   case ints {
     [] -> solution == tally
     [first, ..rest] -> {
-      solve(solution, rest, tally + first)
-      || solve(solution, rest, tally * first)
+      list.any(operations, fn(op) {
+        solve(solution, rest, op(tally, first), operations)
+      })
     }
   }
 }
 
 pub fn step1(input) {
   parse_input(input)
-  |> list.filter(can_be_solved)
+  |> list.filter(can_be_solved(_, [int.add, int.multiply]))
+  |> list.map(fn(x) { x.0 })
+  |> list.fold(0, int.add)
+}
+
+pub fn step2(input) {
+  parse_input(input)
+  |> list.filter(can_be_solved(_, [int.add, int.multiply, concat]))
   |> list.map(fn(x) { x.0 })
   |> list.fold(0, int.add)
 }
