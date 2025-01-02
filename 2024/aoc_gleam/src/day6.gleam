@@ -52,7 +52,7 @@ fn move_until_out_of_bounds(
 }
 
 pub fn step1(input) {
-  let grid = grid.index_2d_input(input)
+  let grid = grid.parse_input(input)
 
   let initial_pos =
     grid.find_locations(grid, "^")
@@ -103,7 +103,7 @@ fn move_until_out_of_bounds_or_loop_detected(
 }
 
 pub fn step2(input) {
-  let grid = grid.index_2d_input(input)
+  let grid = grid.parse_input(input)
 
   let initial_pos =
     grid.find_locations(grid, "^")

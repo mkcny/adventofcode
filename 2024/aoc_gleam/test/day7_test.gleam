@@ -33,5 +33,5 @@ pub fn part2_sample_test() {
 
 pub fn part2_test() {
   use input <- result.map(simplifile.read("input/day7"))
-  day7.step2(input) |> should.equal(0)
+  day7.step2(input) |> should.equal(340_362_529_351_427)
 }

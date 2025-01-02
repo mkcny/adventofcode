@@ -20,7 +20,7 @@ fn get_strings_for_offsets(
 
 pub fn step1() {
   use input <- result.map(simplifile.read("input/day4"))
-  let indexed = grid.index_2d_input(input)
+  let indexed = grid.parse_input(input)
 
   let x_indexes = grid.find_locations(indexed, "X")
 
@@ -44,7 +44,7 @@ pub fn step1() {
 
 pub fn step2() {
   use input <- result.map(simplifile.read("input/day4"))
-  let indexed = grid.index_2d_input(input)
+  let indexed = grid.parse_input(input)
 
   let a_indexes = grid.find_locations(indexed, "A")
 
