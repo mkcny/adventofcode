@@ -1,9 +1,6 @@
-import gleam/bool
 import gleam/int
 import gleam/list
-import gleam/option
 import gleam/result
-import gleam/set
 import gleam/string
 
 fn parse_input(input: String) -> List(#(Int, List(Int))) {
@@ -22,48 +19,20 @@ fn parse_input(input: String) -> List(#(Int, List(Int))) {
   })
 }
 
-pub fn combinations_of_length(pair: #(a, a), length: Int) -> set.Set(List(a)) {
-  list.range(0, length)
-  |> list.map(fn(num) {
-    list.append(list.repeat(pair.0, num), list.repeat(pair.1, length - num))
-  })
-  |> list.flat_map(list.permutations)
-  |> set.from_list
-}
-
-type Operations {
-  Add
-  Multiply
-}
-
 fn can_be_solved(equation: #(Int, List(Int))) -> Bool {
-  let #(total, ints) = equation
-
-  combinations_of_length(#(Add, Multiply), list.length(ints))
-  |> set.to_list
-  |> list.find(fn(operations) {
-    apply_operators_to_list(ints, operations, option.None) |> option.unwrap(0)
-    == total
-  })
-  |> result.is_ok
+  let #(solution, ints) = equation
+  let assert [first, ..rest] = ints
+  solve(solution, rest, first)
 }
 
-fn apply_operators_to_list(
-  ints: List(Int),
-  operations: List(Operations),
-  acc: option.Option(Int),
-) -> option.Option(Int) {
-  use <- bool.guard(when: list.is_empty(ints), return: acc)
-
-  let assert [num, ..remaining_nums] = ints
-  let assert [op, ..remaining_ops] = operations
-
-  let acc = case op {
-    Add -> option.unwrap(acc, 0) + num
-    Multiply -> option.unwrap(acc, 1) * num
+fn solve(solution: Int, ints: List(Int), tally: Int) -> Bool {
+  case ints {
+    [] -> solution == tally
+    [first, ..rest] -> {
+      solve(solution, rest, tally + first)
+      || solve(solution, rest, tally * first)
+    }
   }
-
-  apply_operators_to_list(remaining_nums, remaining_ops, option.Some(acc))
 }
 
 pub fn step1(input) {

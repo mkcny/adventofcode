@@ -1,6 +1,8 @@
 import day7
+import gleam/result
 import gleeunit
 import gleeunit/should
+import simplifile
 
 pub fn main() {
   gleeunit.main()
@@ -18,4 +20,9 @@ const sample_input = "190: 10 19
 
 pub fn part1_sample_test() {
   day7.step1(sample_input) |> should.equal(3749)
+}
+
+pub fn part1_test() {
+  use input <- result.map(simplifile.read("input/day7"))
+  day7.step1(input) |> should.equal(3_598_800_864_292)
 }
