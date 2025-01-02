@@ -53,11 +53,7 @@ fn move_until_out_of_bounds(
 
 pub fn step1(input) {
   let grid = grid.parse_input(input)
-
-  let initial_pos =
-    grid.find_locations(grid, "^")
-    |> list.first
-    |> result.unwrap(#(0, 0))
+  let initial_pos = grid.find(grid, "^")
 
   move_until_out_of_bounds(grid, initial_pos, Up, set.new())
   |> set.size
@@ -104,11 +100,7 @@ fn move_until_out_of_bounds_or_loop_detected(
 
 pub fn step2(input) {
   let grid = grid.parse_input(input)
-
-  let initial_pos =
-    grid.find_locations(grid, "^")
-    |> list.first
-    |> result.unwrap(#(0, 0))
+  let initial_pos = grid.find(grid, "^")
 
   move_until_out_of_bounds(grid, initial_pos, Up, set.new())
   |> set.delete(initial_pos)

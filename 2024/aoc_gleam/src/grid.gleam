@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/list
+import gleam/result
 import gleam/string
 
 pub type Grid =
@@ -19,6 +20,13 @@ pub fn find_locations(grid, char_to_find) -> List(#(Int, Int)) {
   dict.to_list(grid)
   |> list.filter(fn(entry) { entry.1 == char_to_find })
   |> list.map(fn(entry) { entry.0 })
+}
+
+pub fn find(grid, char_to_find) -> #(Int, Int) {
+  dict.to_list(grid)
+  |> list.find(fn(entry) { entry.1 == char_to_find })
+  |> result.map(fn(entry) { entry.0 })
+  |> result.unwrap(#(0, 0))
 }
 
 pub fn get_at(grid: Grid, idx: #(Int, Int)) -> Result(String, Nil) {
