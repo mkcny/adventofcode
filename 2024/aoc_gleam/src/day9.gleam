@@ -4,46 +4,46 @@ import gleam/list
 import gleam/pair
 import gleam/string
 
-pub fn get_blocks(input) {
+fn get_blocks(input) {
   string.to_graphemes(input)
   |> list.filter_map(int.parse)
   |> list.index_fold(#(deque.new(), 0), fn(acc, size, index) {
     let #(blocks, file_id) = acc
-    let #(char, file_id) = case index % 2 {
-      0 -> #(int.to_string(file_id), file_id + 1)
-      _ -> #(".", file_id)
+    let #(num, file_id) = case index % 2 {
+      0 -> #(file_id, file_id + 1)
+      _ -> #(-1, file_id)
     }
-    #(list.repeat(char, size) |> list.fold(blocks, deque.push_back), file_id)
+    #(list.repeat(num, size) |> list.fold(blocks, deque.push_back), file_id)
   })
   |> pair.first
 }
 
-pub fn compact(blocks, acc) {
+fn compact(blocks, acc) {
   case deque.pop_front(blocks) {
-    Ok(#(".", blocks)) -> {
+    Ok(#(-1, blocks)) -> {
       case get_from_end(blocks) {
-        Ok(#(char, blocks)) -> compact(blocks, acc <> char)
+        Ok(#(num, blocks)) -> compact(blocks, deque.push_back(acc, num))
         _ -> acc
       }
     }
-    Ok(#(char, blocks)) -> compact(blocks, acc <> char)
+    Ok(#(num, blocks)) -> compact(blocks, deque.push_back(acc, num))
     _ -> acc
   }
 }
 
-pub fn get_from_end(blocks) {
+fn get_from_end(blocks) {
   case deque.pop_back(blocks) {
-    Ok(#(".", blocks)) -> get_from_end(blocks)
+    Ok(#(-1, blocks)) -> get_from_end(blocks)
     x -> x
   }
 }
 
-pub fn checksum(compacted) {
-  string.to_graphemes(compacted)
-  |> list.filter_map(int.parse)
+fn checksum(compacted) {
+  compacted
+  |> deque.to_list
   |> list.index_fold(0, fn(acc, num, i) { acc + { num * i } })
 }
 
 pub fn step1(input) {
-  get_blocks(input) |> compact("") |> checksum
+  get_blocks(input) |> compact(deque.new()) |> checksum
 }
